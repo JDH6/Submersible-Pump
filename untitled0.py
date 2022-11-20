@@ -11,8 +11,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-T = np.linspace(0,15)
-K = 2
+t = np.linspace(0,15)
+K = 0.1
 v0 = 5
 
 
@@ -20,12 +20,12 @@ h = 6
 
 def dT(y,t):
     dB = 5.6/(9.81*h)*t
-    dO = K*t
+    dO = K
     dT = dB - dO
     return dT
 
 
-result = odeint(dT, v0, T)
+result = odeint(dT, v0, t)
 
 plt.plot(t,result)
 
