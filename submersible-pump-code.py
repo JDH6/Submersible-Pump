@@ -10,6 +10,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 T = 604800
+
+def taps(t):
+    K = 0.0001
+    return K
+    
+
 K = 0.0001
 t = 0
 Vl = [0]
@@ -21,7 +27,7 @@ while n < T:
         t = 1
         Vstart = Vl[-1]
         while V <= 228:
-            V = Vstart + ((1.00944 - K) * (t))
+            V = Vstart + ((1.00944 - taps(t)) * (t))
             VfromWell = VfromWell + ((1.00944 - K) * (t))
             t = t + 1
             n = n + 1
@@ -32,7 +38,7 @@ while n < T:
         t = 1
         Vstart = Vl[-1]
         while V > 214:
-            V = Vstart + ((- K) * (t))
+            V = Vstart + ((- taps(t)) * (t))
             t = t + 1
             n = n + 1
             Vl.append(V)
