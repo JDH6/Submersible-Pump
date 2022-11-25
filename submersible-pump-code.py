@@ -51,7 +51,8 @@ plt.plot(n,Vl)
 plt.xlabel('Time (seconds)')
 plt.ylabel('Volume (litres)')
 
-print(VfromWell)
+print('Total Volume Pumped: ', VfromWell,'litres')
+
 
 
 
