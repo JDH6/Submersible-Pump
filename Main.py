@@ -80,7 +80,7 @@ print(VfromWell)
 
 #------Miles & Phillip work combined-----------
 
-endpoint=False
+endpoint=True
 
 netFlow = boreholeFlowRateIn - boreholeFlowRateOut
 boreholeCrossSectionArea = np.pi * (boreholeDiameter / 2)**2
@@ -104,7 +104,7 @@ for t in range(startTime, endTime + 1):
         Pr = el*Pn #real power for partially submerged pump
     Egp = rho*Vb*g*waterTableHeight(t) #GPE energy required to pump water to tanks
     EpValues.append(t*Pr)
-    if any(EpValues) >= Egp : #if electrical energy output less than or equal to energy to move water
+    if Egp > any(EpValues) : #if electrical energy output less than or equal to energy to move water
         endpoint=True #boolean value true, motor broke endpoint reached
         endTime = t
         break
