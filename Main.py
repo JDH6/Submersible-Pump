@@ -32,7 +32,7 @@ boreholeFlowRateOut = 5.0472 * 10**-3
 boreholeFlowRateIn = 1*10**-7
 boreholeDiameter = 0.1524
 
-#----------------------------------------------------------------------------
+#------------Jaco's work-------------------------------------------------------------
 
 T = 604800
 
@@ -78,7 +78,7 @@ plt.ylabel('Volume (litres)')
 
 print(VfromWell)
 
-
+#------Miles work------
 
 netFlow = boreholeFlowRateIn - boreholeFlowRateOut
 boreholeCrossSectionArea = np.pi * (boreholeDiameter / 2)**2
