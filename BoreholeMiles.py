@@ -11,7 +11,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-t = 0 #t = time period of running simulation in seconds
+startTime = 0 
+endTime = 3600
+
 
 
 waterTableHeight = 91.44 #initial water table height
@@ -33,7 +35,7 @@ def volumeOfBorehole(waterTableHeight, boreholeCrossSectionArea, volumeOfPump, v
 
 newVolumeAfterTime = 0
 
-while t < 3600:
+while t < endTime:
     netFlow = boreholeFlowRateIn - boreholeFlowRateOut
     #print(netFlow)
     newVolumeAfterTime = volumeOfBorehole(waterTableHeight, boreholeCrossSectionArea, volumeOfPump, verticalPipeCrossSectionArea) + (netFlow)
