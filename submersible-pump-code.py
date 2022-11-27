@@ -29,7 +29,7 @@ Vhigh = TankVolume - (Pressure_Initial * TankVolume) / 413685
 
 Flow_well_to_tank = 1.00944 #Litres per second
 
-print('Lower Bound of Volume (litres): ',Vlow,',     Upper bound of Volume (litres): ',Vhigh)
+print('Lower Bound of Volume (litres): ',Vlow,'\nUpper bound of Volume (litres): ',Vhigh)
 
 t = 0 #A counter for time that is independent from n
 Vl = [0] #Volume list with initial volume
