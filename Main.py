@@ -78,36 +78,40 @@ plt.ylabel('Volume (litres)')
 
 print(VfromWell)
 
-#------Miles work------
+#------Miles & Phillip work combined-----------
+
+endpoint=False
 
 netFlow = boreholeFlowRateIn - boreholeFlowRateOut
 boreholeCrossSectionArea = np.pi * (boreholeDiameter / 2)**2
+
 
 
 def waterTableHeight(t):
     return initialWaterTableHeight + ((netFlow * t) / boreholeCrossSectionArea)
 
 xValues = []
-yValues = []                                      
+yValues = [] 
+EpValues = []                                    
 
 for t in range(startTime, endTime + 1):
     xValues.append(t)
     yValues.append(waterTableHeight(t))
-
-plt.plot(xValues,yValues, 'go--', linewidth=2, markersize=12)
-plt.xlabel('Time (seconds)')
-plt.ylabel('Water table height (metres)')
-plt.title('Water table height measured from the bottom of the borehole')
-
-#----Phillips work--------
-
-while waterTableHeight(t)>=7.62:
-    Pr = es*Pn #real power for submerged pump
-    Vb = pi*waterTableHeight*(Rb**2-Rv**2) #Volume of borehole
-else:
-    Pr = el*Pn #real power for partially submerged pump
-Egp = rho*Vb*g*waterTableHeight #real voltage for partially submerged pump
-Ep = Pr*t #Electrical energy ouptut of motor
-if any(Ep) <= Egp : #if electrical energy output less than or equal to energy to move water
-    endpoint=True #boolean value true, endpoint reached
+    Vb = pi*waterTableHeight(t)*(Rb**2-Rv**2) #Volume of borehole
+    if waterTableHeight(t)>=7.62:
+        Pr = es*Pn #real power for submerged pump
+    else:
+        Pr = el*Pn #real power for partially submerged pump
+    Egp = rho*Vb*g*waterTableHeight(t) #GPE energy required to pump water to tanks
+    EpValues.append(t*Pr)
+    if any(EpValues) >= Egp : #if electrical energy output less than or equal to energy to move water
+        endpoint=True #boolean value true, motor broke endpoint reached
+        endTime = t
+        break
+    else:
+        endpoint=False #boolean value false, motor did not break
     
+if endpoint==True:
+    print('Motor has broken in', endTime, 'seconds')
+elif endpoint==False:
+    print('Motor did not fail in', endTime, 'seconds')
