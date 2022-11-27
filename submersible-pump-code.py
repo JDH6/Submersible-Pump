@@ -13,7 +13,10 @@ N = int(input("Enter number of taps: "))
 T = int(input("Enter time period (in seconds): "))
 
 def taps(t,N):
-    K = 0.0001
+    if t < 500:
+        K = 0.1
+    else:
+        K = 0
     output = N * K
     return output
 
@@ -41,9 +44,9 @@ while n < T:
         t = 1
         Vstart = Vl[-1]
         while V <= Vhigh:
-            V = Vstart + ((Flow_well_to_tank - taps(t,N)) * (t))
+            V = Vstart + ((Flow_well_to_tank - taps(n,N)) * t)
             if V <= 0: break
-            VfromWell = VfromWellInitial + ((Flow_well_to_tank - taps(t,N)) * (t)) * 0.264172 #The total volume pumped from well converted to gallons
+            VfromWell = VfromWellInitial + ((Flow_well_to_tank - taps(n,N)) * t) * 0.264172 #The total volume pumped from well converted to gallons
             t = t + 1
             Vl.append(V)
             n = n + 1
@@ -53,7 +56,7 @@ while n < T:
         t = 1
         Vstart = Vl[-1]
         while V > Vlow:
-            V = Vstart + ((- taps(t,N)) * (t))
+            V = Vstart + ((- taps(n,N)) * t)
             t = t + 1
             if V <= 0: break
             Vl.append(V)
