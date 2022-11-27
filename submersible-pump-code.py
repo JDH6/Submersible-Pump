@@ -57,7 +57,7 @@ while n < T:
         t = 1
         Vstart = Vl[-1]
         while V > Vlow:
-            V = Vstart + ((- taps(n,N,K)) * t)
+            V = Vstart - taps(n,N,K) * t
             t = t + 1
             if V <= 0:
                 V = 0
