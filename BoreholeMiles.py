@@ -10,42 +10,56 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-#Note that at time t = 0, the height is 300 ft above aquifier
+class BoreHole():
+    
+    def __init__(self):
 
-#---------------VARIABLES THAT WE EDIT---------------------------------------
-
-startTime = 0 
-endTime = 3
-boreholeFlowRateOut = 5.0472 * 10**-3
-boreholeFlowRateIn = 1*10**-7
-boreholeDiameter = 0.1524
-
-#----------------------------------------------------------------------------
-
-initialWaterTableHeight = 91.44
-netFlow = boreholeFlowRateIn - boreholeFlowRateOut
-boreholeCrossSectionArea = np.pi * (boreholeDiameter / 2)**2
-
-
-'''
-volumeOfPump = boreholeCrossSectionArea * 7.62
-verticalPipeCrossSectionArea = 5.067074791 * 10**(-4)
-volumeOfPipe = verticalPipeCrossSectionArea * 83.82
-
-'''
-
-
-def waterTableHeight(t):
-    return initialWaterTableHeight + ((netFlow * t) / boreholeCrossSectionArea)
-
-xValues = []
-yValues = []                                      
-
-for t in range(startTime, endTime + 1):
-    xValues.append(t)
-    yValues.append(waterTableHeight(t))
-
-plt.plot(xValues,yValues, 'go--', linewidth=2, markersize=12)
-plt.xlabel('Time (seconds)')
-plt.ylabel('Water table height (metres)')
-plt.title('Water table height measured from the bottom of the borehole')
+        #Note that at time t = 0, the height is 300 ft above aquifier
+        
+        #---------------VARIABLES THAT WE EDIT---------------------------------------
+        
+        self.startTime = 0 
+        self.endTime = 3
+        self.boreholeFlowRateOut = 5.0472 * 10**-3
+        self.boreholeFlowRateIn = 1*10**-7
+        self.boreholeDiameter = 0.1524
+        
+        #----------------------------------------------------------------------------
+        
+        self.initialWaterTableHeight = 91.44
+        self.netFlow = self.boreholeFlowRateIn - self.boreholeFlowRateOut
+        self.boreholeCrossSectionArea = np.pi * (self.boreholeDiameter / 2)**2
+    
+        self.waterTableHeightCalculation()
+    
+    
+    def waterTableHeight(self, t):
+        return self.initialWaterTableHeight + ((self.netFlow * t) / self.boreholeCrossSectionArea)
+    
+    
+    
+    def waterTableHeightCalculation(self):
+        self.xValues = []
+        self.yValues = []                                      
+    
+        for t in range(self.startTime, self.endTime + 1):
+            self.xValues.append(t)
+            self.yValues.append(self.waterTableHeight(t))
+            
+        while True:
+            self.selectOutput = input("Would you like to plot a graph of the water table height? \n")
+            if self.selectOutput == "Yes":
+                self.plotOfWaterTableHeight()
+                break
+            elif self.selectOutput == "No":
+                break
+            else:
+                print("Please type either 'Yes' or 'No'.\n")
+            
+        
+    
+    def plotOfWaterTableHeight(self):
+        plt.plot(self.xValues,self.yValues, 'go--', linewidth=2, markersize=12)
+        plt.xlabel('Time (seconds)')
+        plt.ylabel('Water table height (metres)')
+        plt.title('Water table height measured from the bottom of the borehole')
