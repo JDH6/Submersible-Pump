@@ -9,7 +9,7 @@ Created on Sun Nov 20 17:11:14 2022
 import numpy as np
 import matplotlib.pyplot as plt
 
-N = int(input("Enter number of taps: "))
+N = int(input("Enter number of taps: ")) 
 T = int(input("Enter time period (in seconds): "))
 K = 0.01 #flow rate per tap
 
@@ -41,7 +41,7 @@ VfromWellInitial = 0 #Volume from well when the pump turns off everytime after i
 while n < T:
     if V < 0: break
     if Vl[-1] <= Vlow:
-        t = 1
+        t = 1 
         Vstart = Vl[-1]
         while V <= Vhigh:
             V = Vstart + ((Flow_well_to_tank - taps(n,N,K)) * t)
