@@ -8,7 +8,7 @@ pi = 3.14 #pi
 
 #---------------SYSTEM CHARACTERISTICS------------------------------------
 
-Pn = 5595 #nominal power (W)
+Pn = 5516 #nominal power (W)
 es = 0.64 #starting pump efficiency
 el = 0.265 #lowered pump efficiency
 Rb = 0.1524 #borehole radius (m)
@@ -42,20 +42,23 @@ EpValues = []
 for t in range(startTime, endTime + 1):
     xValues.append(t)
     yValues.append(waterTableHeight(t))
-    Vb = pi*waterTableHeight(t)*(Rb**2-Rv**2) #Volume of borehole
+    Vb = pi*waterTableHeight(t)*(Rb**2-Rv**2) #Volume of borehole *need to take away pump volume*
     if waterTableHeight(t)>=7.62:
         Pr = es*Pn #real power for submerged pump
     else:
         Pr = el*Pn #real power for partially submerged pump
-    Egp = rho*Vb*g*waterTableHeight(t) #GPE energy required to pump water to tanks
+    Egp = rho*Vb*g*(initialWaterTableHeight-waterTableHeight(t)) #GPE energy required to pump water to tanks
     EpValues.append(t*Pr)
-    if any(EpValues) >= Egp : #if electrical energy output less than or equal to energy to move water
+    
+    if  Egp > any(EpValues) : #if electrical energy output less than or equal to energy to move water
         endpoint=True #boolean value true, motor broke endpoint reached
         endTime = t
         break
     else:
         endpoint=False #boolean value false, motor did not break
     
+    
+
 if endpoint==True:
     print('Motor has broken in', endTime, 'seconds')
 elif endpoint==False:
