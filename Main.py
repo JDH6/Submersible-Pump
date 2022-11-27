@@ -20,8 +20,9 @@ t = np.linspace(0, 3600, num=3600, endpoint=False) #time is intervals to an hour
 Pn = 5595 #nominal power (W)
 es = 0.64 #starting pump efficiency
 el = 0.265 #lowered pump efficiency
-Rb = 0.1524 #borehole radius (m)
-Rv = 0.0254 #valve radius (m)
+boreholeDiameter = 0.1524
+Rb = 0.0764 #borehole radius (m)
+Rv = 0.01252 #valve radius (m)
 initialWaterTableHeight = 91.44 #water table height at start (m)
 
 #---------------VARIABLES THAT WE EDIT---------------------------------------
@@ -30,9 +31,8 @@ startTime = 0
 endTime = 3
 boreholeFlowRateOut = 5.0472 * 10**-3
 boreholeFlowRateIn = 1*10**-7
-boreholeDiameter = 0.1524
 
-#----------------------------------------------------------------------------
+#------------Jaco's work-------------------------------------------------------------
 
 T = 604800
 
@@ -78,7 +78,7 @@ plt.ylabel('Volume (litres)')
 
 print(VfromWell)
 
-
+#------Miles work------
 
 netFlow = boreholeFlowRateIn - boreholeFlowRateOut
 boreholeCrossSectionArea = np.pi * (boreholeDiameter / 2)**2
@@ -100,12 +100,13 @@ plt.ylabel('Water table height (metres)')
 plt.title('Water table height measured from the bottom of the borehole')
 
 #----Phillips work--------
+
 while waterTableHeight(t)>=7.62:
     Pr = es*Pn #real power for submerged pump
     Vb = pi*waterTableHeight*(Rb**2-Rv**2) #Volume of borehole
 else:
     Pr = el*Pn #real power for partially submerged pump
-Egp = rho*Vo*g*waterTableHeight #real voltage for partially submerged pump
+Egp = rho*Vb*g*waterTableHeight #real voltage for partially submerged pump
 Ep = Pr*t #Electrical energy ouptut of motor
 if any(Ep) <= Egp : #if electrical energy output less than or equal to energy to move water
     endpoint=True #boolean value true, endpoint reached
