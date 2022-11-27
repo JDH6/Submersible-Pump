@@ -9,49 +9,80 @@ Created on Sun Nov 20 17:11:14 2022
 import numpy as np
 import matplotlib.pyplot as plt
 
-T = 604800
+N = int(input("Enter number of taps: "))
+T = int(input("Enter time period (in seconds): "))
 
-def taps(t):
+def taps(t,N):
     K = 0.0001
-    return K
-    
+    output = N * K
+    return output
 
-K = 0.0001
-t = 0
-Vl = [0]
-n = 0
-V = 0
+
+Pressure_Initial_psi = 14.6959
+Pressure_Initial = Pressure_Initial_psi * 6894.76 #psi to pascals
+TankVolume = 302.833
+Vlow = TankVolume - (Pressure_Initial * TankVolume) / 344738
+Vhigh = TankVolume - (Pressure_Initial * TankVolume) / 413685
+
+Flow_well_to_tank = 1.00944
+
+print(Vlow,Vhigh)
+
+t = 0 #A counter for time that is independent from n
+Vl = [0] #Volume list with initial volume
+n = 0 #a counter for time
+V = 0 #Initial Volume 
 VfromWell = 0
+VfromWellInitial = 0
+
 while n < T:
-    if Vl[-1] <= 214:
+    if V < 0: break
+    if Vl[-1] <= Vlow:
         t = 1
         Vstart = Vl[-1]
-        while V <= 228:
-            V = Vstart + ((1.00944 - taps(t)) * (t))
-            VfromWell = VfromWell + ((1.00944 - K) * (t))
+        while V <= Vhigh:
+            V = Vstart + ((Flow_well_to_tank - taps(t,N)) * (t))
+            if V <= 0: break
+            VfromWell = VfromWellInitial + ((Flow_well_to_tank - taps(t,N)) * (t)) * 0.264172 #The total volume pumped from well converted to gallons
             t = t + 1
-            n = n + 1
             Vl.append(V)
-            if n >= T:
-                break
-    else:
+            n = n + 1
+            if n >= T: break
+        VfromWellInitial = VfromWell
+    else: 
         t = 1
         Vstart = Vl[-1]
-        while V > 214:
-            V = Vstart + ((- taps(t)) * (t))
+        while V > Vlow:
+            V = Vstart + ((- taps(t,N)) * (t))
             t = t + 1
-            n = n + 1
+            if V <= 0: break
             Vl.append(V)
-            if n >= T:
-                break
+            n = n + 1
+            if n >= T: break
             
-n = np.linspace(1,n,n+1)
+nList = np.linspace(0,n-1,n+1)
 
-plt.plot(n,Vl)
+if len(nList) == 0:
+    nEnd = 0
+else:
+    nEnd = int(nList[-1])
+
+if len(Vl) != T:
+    if nEnd == 0:
+        nList = [0]
+    for i in range(nEnd,T-1,1):
+        Vl.append(Vl[-1])
+    for i in range(nEnd,T-1,1):
+        nList = np.append(nList,i-nEnd)  
+
+Vl = [item * 0.264172 for item in Vl] #Converting litres to gallons
+
+plt.plot(nList,Vl)
 plt.xlabel('Time (seconds)')
-plt.ylabel('Volume (litres)')
+plt.ylabel('Volume (gallons)')
+plt.show()
 
-print('Total Volume Pumped: ', VfromWell,'litres')
+print('Total Volume Pumped: ', VfromWell,'gallons')
 
 
 
