@@ -14,8 +14,9 @@ T = int(input("Enter time period (in seconds): "))
 K = 0.01 #flow rate per tap
 
 def taps(t,N,k):
-    if (t > 100 and t < 750):
+    if (t > 100 and t < 750) or (t > 900 and t < 1250) or (t > 2000 and t < 2500):
         K = k
+
     else:
         K = 0
     output = N * K
@@ -49,7 +50,7 @@ while n < T:
         while V <= Vhigh:
             if taps(n,N,K) != 0 and x == True:
                 Vstart = Vstart + taps(n,N,K)*t
-                x = False 
+                x = False
             elif x == False:
                 t = 0
                 Vstart = Vl[-1]
@@ -66,10 +67,15 @@ while n < T:
     else: 
         t = 1
         Vstart = Vl[-1]
+        x1 == True
         while V > Vlow:
             if taps(n,N,K) == 0 and x1 == True:
+                Vstart = Vl[-1]
                 x1 = False
-                break
+                t = 0
+            elif x1 == False:
+                Vstart = Vl[-1] + taps(n,N,K)*t
+                x1 = True
             V = Vstart - taps(n,N,K) * t
             t = t + 1
             if V <= 0:
