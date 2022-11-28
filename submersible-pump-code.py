@@ -14,7 +14,7 @@ T = int(input("Enter time period (in seconds): "))
 K = 0.01 #flow rate per tap
 
 def taps(t,N,k):
-    if t > 100 and t < 800:
+    if (t > 100 and t < 750):
         K = k
     else:
         K = 0
@@ -37,13 +37,23 @@ n = 0 #a counter for time
 V = 0 #Initial Volume 
 VfromWell = 0 #Total volume pumped from well.
 VfromWellInitial = 0 #Volume from well when the pump turns off everytime after it has run
+x = False
+x1 = True
 
 while n < T:
     if V < 0: break
     if Vl[-1] <= Vlow:
         t = 1 
+        x = True
         Vstart = Vl[-1]
         while V <= Vhigh:
+            if taps(n,N,K) != 0 and x == True:
+                Vstart = Vstart + taps(n,N,K)*t
+                x = False 
+            elif x == False:
+                t = 0
+                Vstart = Vl[-1]
+                x = True
             V = Vstart + ((Flow_well_to_tank - taps(n,N,K)) * t)
             if V <= 0:
                 V = 0
@@ -57,6 +67,9 @@ while n < T:
         t = 1
         Vstart = Vl[-1]
         while V > Vlow:
+            if taps(n,N,K) == 0 and x1 == True:
+                x1 = False
+                break
             V = Vstart - taps(n,N,K) * t
             t = t + 1
             if V <= 0:
@@ -68,11 +81,14 @@ while n < T:
 nList = np.linspace(0,n-1,n+1) #List of n values
 
 
-Vl = [item * 0.264172 for item in Vl] #Converting litres to gallons
+Vl = [(302.833 - item) for item in Vl]
+Vl = [((101325*302.833)/item) for item in Vl]
+Vl = [item * 0.000145038 for item in Vl]
 
 plt.plot(nList,Vl) #Plot the list of n against the list of Volumes
 plt.xlabel('Time (seconds)')
-plt.ylabel('Volume (gallons)')
+plt.ylabel('Pressure (psi)')
+plt.title('Pressure Fluctuations in water tanks')
 plt.show()
 
 print('Total Volume Pumped: ', VfromWell,'gallons')
