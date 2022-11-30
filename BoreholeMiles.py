@@ -45,21 +45,25 @@ class BoreHole():
         for t in range(self.startTime, self.endTime + 1):
             self.xValues.append(t)
             self.yValues.append(self.waterTableHeight(t))
-            
+        
+    
+    
+    def plotOfWaterTableHeight(self):
+        self.waterTableHeightCalculation()
         while True:
-            self.selectOutput = input("Would you like to plot a graph of the water table height? \n")
+            self.selectOutput = input("Would you like to plot a graph of the water table height from start to end time? \n")
             if self.selectOutput == "Yes":
-                self.plotOfWaterTableHeight()
+                plt.plot(self.xValues,self.yValues, 'go--', linewidth=2, markersize=12)
+                plt.xlabel('Time (seconds)')
+                plt.ylabel('Water table height (metres)')
+                plt.title('Water table height measured from the bottom of the borehole')
                 break
             elif self.selectOutput == "No":
                 break
             else:
                 print("Please type either 'Yes' or 'No'.\n")
-            
+                
+
+BoreHole.plotOfWaterTableHeight()
         
-    
-    def plotOfWaterTableHeight(self):
-        plt.plot(self.xValues,self.yValues, 'go--', linewidth=2, markersize=12)
-        plt.xlabel('Time (seconds)')
-        plt.ylabel('Water table height (metres)')
-        plt.title('Water table height measured from the bottom of the borehole')
+
