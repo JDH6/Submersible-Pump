@@ -14,7 +14,7 @@ T = int(input("Enter time period (in seconds): "))
 K = 0.01 #flow rate per tap
 
 def taps(t,N,k):
-    if (t > 100 and t < 750) or (t > 900 and t < 1250) or (t > 2000 and t < 2500):
+    if (t > 100 and t < 750) or (t > 900 and t < 1200) or (t > 2000 and t < 2500):
         K = k
 
     else:
