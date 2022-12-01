@@ -59,6 +59,7 @@ for t in range(startTime, endTime + 1):
     #Gpe = abs(rho*Vb*g*(-18.288-(initialWaterTableHeight-waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)))) #GPE energy required to pump water to tanks. Note that this is negative, hence we take the modulus.
     motorPower = rho*g*Flow_well_to_tank
     if motorPower >= Pr:
+        motorPower = Pr
         endpoint=True
     else:
         endpoint=False
@@ -76,3 +77,6 @@ plt.xlabel('Time (seconds)')
 plt.ylabel('Water table height (metres)')
 plt.title('Water table height measured from the bottom of the borehole')
 plt.plot(motorPower, t, 'b-', linewidth=2, markersize=12)
+plt.xlabel('Time (seconds)')
+plt.ylabel('Motor power')
+plt.title('Water table height measured from the bottom of the borehole')
