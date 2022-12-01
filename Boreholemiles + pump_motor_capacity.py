@@ -24,27 +24,26 @@ Rb = 0.1524 #borehole radius (m)
 Rv = 0.0254 #valve radius (m)
 boreholeDiameter = 0.1524
 initialWaterTableHeight = 65.532 #equivalent to 215ft. Is the distance from top of motor to water table 60ft below ground level.
-
+totalHeight = 83.82 #height from top of motor to ground level
 
 #---------------VARIABLES THAT WE EDIT---------------------------------------
 
 startTime = 0 
-endTime = 3
-boreholeFlowRateOut = 5.0472 * 10**-3  #INCORRECT
-boreholeFlowRateIn = 1*10**-7  #Research a value
-Flow_well_to_tank = 1.00944
+endTime = 3500
+Flow_well_to_tank = 1.00944 #INCORRECT
+boreholeFlowRateIn = 1.009  #Research a value
 
 #----------------------------------------------------------------------------
 
 endpoint=False
 
-netFlow = boreholeFlowRateIn - boreholeFlowRateOut
+netFlow = boreholeFlowRateIn - Flow_well_to_tank
 boreholeCrossSectionArea = np.pi * (boreholeDiameter / 2)**2
 
 
 
 def waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea):
-    return initialWaterTableHeight + ((netFlow * t) / boreholeCrossSectionArea)
+    return initialWaterTableHeight + ((netFlow * t / boreholeCrossSectionArea))
 
 xValues = []
 yValues = [] 
@@ -55,9 +54,9 @@ for t in range(startTime, endTime + 1):
     yValues.append(waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea))
     Vb = np.pi*waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)*(Rb**2-Rv**2) #Volume of borehole 
     Pr = es*Pn
-    h = (-18.288-(initialWaterTableHeight-waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)))
+    h = totalHeight - waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)
     #Gpe = abs(rho*Vb*g*(-18.288-(initialWaterTableHeight-waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)))) #GPE energy required to pump water to tanks. Note that this is negative, hence we take the modulus.
-    motorPower = rho*g*Flow_well_to_tank
+    motorPower = rho*g*Flow_well_to_tank*waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)
     if motorPower >= Pr:
         motorPower = Pr
         endpoint=True
@@ -72,11 +71,14 @@ elif endpoint==False:
 
 
 
-plt.plot(xValues,yValues, 'go--', linewidth=2, markersize=12)
+
+plt.plot(xValues,yValues, 'g--', linewidth=2)
 plt.xlabel('Time (seconds)')
 plt.ylabel('Water table height (metres)')
+plt.xlim([startTime, endTime])
+plt.ylim([-50, 100])
 plt.title('Water table height measured from the bottom of the borehole')
-plt.plot(motorPower, t, 'b-', linewidth=2, markersize=12)
+plt.plot(motorPower, t, 'b-', linewidth=2)
 plt.xlabel('Time (seconds)')
 plt.ylabel('Motor power')
-plt.title('Water table height measured from the bottom of the borehole')
+plt.title('Motor power against time')
