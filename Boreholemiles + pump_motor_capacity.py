@@ -33,8 +33,8 @@ initialWaterTableHeight = 65.532 #equivalent to 215ft. Is the distance from top 
 
 startTime = 0 
 endTime = 3
-boreholeFlowRateOut = 5.0472 * 10**-3
-boreholeFlowRateIn = 1*10**-7
+boreholeFlowRateOut = 5.0472 * 10**-3  #INCORRECT
+boreholeFlowRateIn = 1*10**-7  #Research a value
 
 #----------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ boreholeCrossSectionArea = np.pi * (boreholeDiameter / 2)**2
 
 
 
-def waterTableHeight(t):
+def waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea):
     return initialWaterTableHeight + ((netFlow * t) / boreholeCrossSectionArea)
 
 xValues = []
@@ -54,22 +54,23 @@ EpValues = []
 
 for t in range(startTime, endTime + 1):
     xValues.append(t)
-    yValues.append(waterTableHeight(t))
-    Vb = np.pi*waterTableHeight(t)*(Rb**2-Rv**2) #Volume of borehole 
-    if waterTableHeight(t)>=0:
+    yValues.append(waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea))
+    Vb = np.pi*waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)*(Rb**2-Rv**2) #Volume of borehole 
+   
+    if waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)>=0:
         Pr = es*Pn #real power for submerged pump
     else:
         Pr = el*Pn #real power for partially submerged pump
         
-    Egp = abs(rho*Vb*g*(-60-(initialWaterTableHeight-waterTableHeight(t)))) #GPE energy required to pump water to tanks. Note that this is negative, hence we take the modulus.
+    Gpe = abs(rho*Vb*g*(-60-(initialWaterTableHeight-waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)))) #GPE energy required to pump water to tanks. Note that this is negative, hence we take the modulus.
     
-    
+    energyRequired = Pr *  
     
     
     
     EpValues.append(t*Pr) #INCORRECT
     
-    if  Egp > any(EpValues) : #if electrical energy output less than or equal to energy to move water
+    if  Gpe > any(EpValues) : #if electrical energy output less than or equal to energy to move water
         endpoint=True #boolean value true, motor broke endpoint reached
         endTime = t
         break
