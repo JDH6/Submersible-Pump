@@ -19,10 +19,7 @@ g = 9.81 #gravitational constant
 
 #Pn = 5516 #nominal power (W) ???????
 Pn = 5592.75 #nominal power (W) ???????
-
-es = 0.64 #starting pump efficiency
-el = 0.265 #lowered pump efficiency
-
+es = 0.64 #pump efficiency
 Rb = 0.1524 #borehole radius (m)
 Rv = 0.0254 #valve radius (m)
 boreholeDiameter = 0.1524
@@ -35,6 +32,7 @@ startTime = 0
 endTime = 3
 boreholeFlowRateOut = 5.0472 * 10**-3  #INCORRECT
 boreholeFlowRateIn = 1*10**-7  #Research a value
+Flow_well_to_tank = 1.00944
 
 #----------------------------------------------------------------------------
 
@@ -56,33 +54,21 @@ for t in range(startTime, endTime + 1):
     xValues.append(t)
     yValues.append(waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea))
     Vb = np.pi*waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)*(Rb**2-Rv**2) #Volume of borehole 
-   
-    if waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)>=0:
-        Pr = es*Pn #real power for submerged pump
-    else:
-        Pr = el*Pn #real power for partially submerged pump
-        
-    Gpe = abs(rho*Vb*g*(-60-(initialWaterTableHeight-waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)))) #GPE energy required to pump water to tanks. Note that this is negative, hence we take the modulus.
-    
-    energyRequired = Pr *  
-    
-    
-    
-    EpValues.append(t*Pr) #INCORRECT
-    
-    if  Gpe > any(EpValues) : #if electrical energy output less than or equal to energy to move water
-        endpoint=True #boolean value true, motor broke endpoint reached
-        endTime = t
+    Pr = es*Pn
+    h = (-18.288-(initialWaterTableHeight-waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)))
+    #Gpe = abs(rho*Vb*g*(-18.288-(initialWaterTableHeight-waterTableHeight(t, initialWaterTableHeight, netFlow, boreholeCrossSectionArea)))) #GPE energy required to pump water to tanks. Note that this is negative, hence we take the modulus.
+    motorPower = rho*g*Flow_well_to_tank
+    if motorPower >= Pr:
+        endpoint=True
         break
     else:
-        endpoint=False #boolean value false, motor did not break
-    
+        endpoint=False
     
 
 if endpoint==True:
-    print('Motor has broken in', endTime, 'seconds')
+    print('Motor has reached maximum power in', endTime, 'seconds')
 elif endpoint==False:
-    print('Motor did not fail in', endTime, 'seconds')
+    print('Motor did not meet maximum power in', endTime, 'seconds')
 
 
 
