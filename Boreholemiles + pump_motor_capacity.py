@@ -60,10 +60,8 @@ for t in range(startTime, endTime + 1):
     motorPower = rho*g*Flow_well_to_tank
     if motorPower >= Pr:
         endpoint=True
-        break
     else:
         endpoint=False
-    
 
 if endpoint==True:
     print('Motor has reached maximum power in', endTime, 'seconds')
@@ -73,8 +71,8 @@ elif endpoint==False:
 
 
 
-
 plt.plot(xValues,yValues, 'go--', linewidth=2, markersize=12)
 plt.xlabel('Time (seconds)')
 plt.ylabel('Water table height (metres)')
 plt.title('Water table height measured from the bottom of the borehole')
+plt.plot(motorPower, t, 'b-', linewidth=2, markersize=12)
