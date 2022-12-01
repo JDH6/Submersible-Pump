@@ -18,13 +18,22 @@ def taps(t,N,k):
     output = N * K
     return output
 
+def Flow_well_to_tank(endPoint):
+    if x == False:
+        output = 1.00944 #Litres per second
+    else:
+        output = 0
+    return output
+
+def pumpPower(h):
+    output = 1.00641168 * 9.81 * h
+    return output
 
 Pressure_Initial = 101325
 TankVolume = 302.833
 Vlow = TankVolume - (Pressure_Initial * TankVolume) / 344738
 Vhigh = TankVolume - (Pressure_Initial * TankVolume) / 413685
-
-Flow_well_to_tank = 1.00944 #Litres per second
+x = False
 
 print('Lower Bound of Volume (litres): ',Vlow,'\nUpper bound of Volume (litres): ',Vhigh)
 
@@ -53,8 +62,8 @@ while n < T:
                 t = 0
                 Vstart = Vl[-1]
                 x = True
-            V = Vstart + ((Flow_well_to_tank - taps(n,N,K)) * t)
-            VfromWell = VfromWellInitial + ((Flow_well_to_tank - taps(n,N,K)) * t) * 0.264172 #The total volume pumped from well converted to gallons
+            V = Vstart + ((Flow_well_to_tank(x) - taps(n,N,K)) * t)
+            VfromWell = VfromWellInitial + ((Flow_well_to_tank(x) - taps(n,N,K)) * t) * 0.264172 #The total volume pumped from well converted to gallons
             if V <= 0:
                 V = 0
             pump.append(True)
@@ -94,7 +103,6 @@ Vl = [item * 0.000145038 for item in Vl]
 plt.plot(nList,Vl) #Plot the list of n against the list of Volumes
 plt.xlabel('Time (seconds)')
 plt.ylabel('Pressure (psi)')
-plt.title('Pressure Fluctuations in water tanks')
 plt.show()
 
 print('Total Volume Pumped: ', VfromWell,'gallons')
