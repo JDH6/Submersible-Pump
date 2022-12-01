@@ -11,7 +11,8 @@ import matplotlib.pyplot as plt
 
 N = int(input("Enter number of taps: ")) 
 T = int(input("Enter time period (in seconds): "))
-K = 0.01 #flow rate per tap
+K = 0.0001 #flow rate per tap
+k = 0.000095
 
 def taps(t,N,k):
     K = k
@@ -29,11 +30,53 @@ def pumpPower(h):
     output = 1.00641168 * 9.81 * h
     return output
 
+def pumpModel(Volume_Initial,pump):
+    marker = False
+    Vb = Volume_Initial
+    Vb_list = [Volume_Initial]
+    Vb_start = Volume_Initial
+    n = 0
+    for i in pump:
+        Borehole = True
+        if Vb <= 0:
+            Vb = 0
+            Vb_list.append(Vb)
+            Borehole = False
+            break
+        elif i == True:
+            if marker == False:
+                t = 1
+                Vb_start = Vb_list[-1]
+            Vb = Vb_start + (k/(Vb/((pi*(0.1524)**2)-pi*(0.0254)**2)) - Flow_well_to_tank(x))*t
+            Vb_list.append(Vb)
+            t = t + 1
+            n = n + 1
+            marker = True
+        else:
+            if marker == True:
+                t = 1
+                Vb_start = Vb_list[-1]
+            Vb = Vb_start + ((k/(Vb_list[-1]/(pi*(0.1524)**2-pi*(0.0254)**2))))
+            Vb_list.append(Vb)
+            t = t + 1
+            n = n + 1
+            marker == False
+    return Vb_list, n, Borehole
+
+pi = 3.145
+pipe_diameter = 0.0254
+borehole_diameter = 0.1524
+pipe_cross_section = pi * (pipe_diameter/2)**2
+borehole_cross_section = pi * (borehole_diameter/2)**2
+Water_height_initial = 65.532
+Volume_Initial = Water_height_initial * (borehole_cross_section - pipe_cross_section) * 1000
 Pressure_Initial = 101325
 TankVolume = 302.833
 Vlow = TankVolume - (Pressure_Initial * TankVolume) / 344738
 Vhigh = TankVolume - (Pressure_Initial * TankVolume) / 413685
 x = False
+
+print(Volume_Initial)
 
 print('Lower Bound of Volume (litres): ',Vlow,'\nUpper bound of Volume (litres): ',Vhigh)
 
@@ -53,7 +96,6 @@ while n < T:
         t = 1 
         x = True
         Vstart = Vl[-1]
-        VfromWellInitial += VfromWell
         while V <= Vhigh:
             if taps(n,N,K) != 0 and x == True:
                 Vstart = Vstart + taps(n,N,K)*t
@@ -63,7 +105,8 @@ while n < T:
                 Vstart = Vl[-1]
                 x = True
             V = Vstart + ((Flow_well_to_tank(x) - taps(n,N,K)) * t)
-            VfromWell = VfromWellInitial + ((Flow_well_to_tank(x) - taps(n,N,K)) * t) * 0.264172 #The total volume pumped from well converted to gallons
+            VfromWell += (Flow_well_to_tank(x) - taps(n,N,K)) * 0.264172 #The total volume pumped from well converted to gallons
+            print()
             if V <= 0:
                 V = 0
             pump.append(True)
@@ -100,14 +143,30 @@ Vl = [(302.833 - item) for item in Vl]
 Vl = [((Pressure_Initial*302.833)/item) for item in Vl]
 Vl = [item * 0.000145038 for item in Vl]
 
-plt.plot(nList,Vl) #Plot the list of n against the list of Volumes
+# plt.plot(nList,Vl) #Plot the list of n against the list of Volumes
 plt.xlabel('Time (seconds)')
-plt.ylabel('Pressure (psi)')
+plt.ylabel('Tank Pressure (psi)')
 plt.show()
 
 print('Total Volume Pumped: ', VfromWell,'gallons')
 
 
+Vb_list, n, Borehole = pumpModel(Volume_Initial,pump)
+
+n = np.linspace(1,n-1,n+1)      
 
 
+H = [(item*0.001)/(borehole_cross_section - pipe_cross_section) for item in Vb_list] 
 
+h = [83.82-item for item in H]
+
+plt.plot(nList,Vb_list)
+plt.xlabel('Time (seconds)')
+plt.ylabel('Borehole Volume (litres)')
+
+pumpList = [pumpPower(item) for item in h]
+
+
+# plt.plot(n,pumpList)
+plt.xlabel('Time (seconds)')
+plt.ylabel('Power (Watts)')

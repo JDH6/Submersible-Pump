@@ -71,7 +71,7 @@ elif endpoint==False:
 
 
 
-plt.plot(xValues,yValues, 'go--', linewidth=2, markersize=12)
+# plt.plot(xValues,yValues, 'go--', linewidth=2, markersize=12)
 plt.xlabel('Time (seconds)')
 plt.ylabel('Water table height (metres)')
 plt.title('Water table height measured from the bottom of the borehole')
