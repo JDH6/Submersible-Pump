@@ -106,7 +106,6 @@ while n < T:
                 x = True
             V = Vstart + ((Flow_well_to_tank(x) - taps(n,N,K)) * t)
             VfromWell += (Flow_well_to_tank(x) - taps(n,N,K)) * 0.264172 #The total volume pumped from well converted to gallons
-            print()
             if V <= 0:
                 V = 0
             pump.append(True)
@@ -137,13 +136,19 @@ while n < T:
             
 nList = np.linspace(0,n-1,n+1) #List of n values
 
+V = Vl
 
+V = [item * 0.219969 for item in V]
+plt.plot(nList,V) #Plot the list of n against the list of Volumes
+plt.xlabel('Time (seconds)')
+plt.ylabel('Tank Volume (gallons)')
+plt.show()
 
 Vl = [(302.833 - item) for item in Vl]
 Vl = [((Pressure_Initial*302.833)/item) for item in Vl]
 Vl = [item * 0.000145038 for item in Vl]
 
-# plt.plot(nList,Vl) #Plot the list of n against the list of Volumes
+plt.plot(nList,Vl) #Plot the list of n against the list of Volumes
 plt.xlabel('Time (seconds)')
 plt.ylabel('Tank Pressure (psi)')
 plt.show()
@@ -163,10 +168,13 @@ h = [83.82-item for item in H]
 plt.plot(nList,Vb_list)
 plt.xlabel('Time (seconds)')
 plt.ylabel('Borehole Volume (litres)')
+plt.ylim([0,1500])
+plt.show()
 
 pumpList = [pumpPower(item) for item in h]
 
 
-# plt.plot(n,pumpList)
+plt.plot(n,pumpList)
 plt.xlabel('Time (seconds)')
 plt.ylabel('Power (Watts)')
+plt.show()
