@@ -14,6 +14,32 @@ T = int(input("Enter time period (in seconds): "))
 K = 0.0001 #flow rate per tap
 k = 0.000095
 
+
+pi = 3.145
+pipe_diameter = 0.0254
+borehole_diameter = 0.1524
+pipe_cross_section = pi * (pipe_diameter/2)**2
+borehole_cross_section = pi * (borehole_diameter/2)**2
+Water_table_height = 18.29
+Depth_of_pump = 83.82
+Water_height_initial = Depth_of_pump - Water_table_height
+Volume_Initial = Water_height_initial * (borehole_cross_section - pipe_cross_section) * 1000
+Pressure_Initial = 330948
+TankVolume = 302.833
+Vlow = TankVolume - (Pressure_Initial * TankVolume) / 344738
+Vhigh = TankVolume - (Pressure_Initial * TankVolume) / 413685
+x = False
+
+t = 0 #A counter for time that is independent from n
+Vl = [0] #Volume list with initial volume
+pump = []
+n = 0 #a counter for time
+V = 0 #Initial Volume 
+VfromWell = 0 #Total volume pumped from well.
+VfromWellInitial = 0 #Volume from well when the pump turns off everytime after it has run
+x = False
+x1 = True
+
 def taps(t,N,k):
     K = k
     output = N * K
@@ -63,32 +89,11 @@ def pumpModel(Volume_Initial,pump):
             marker == False
     return Vb_list, n, Borehole
 
-pi = 3.145
-pipe_diameter = 0.0254
-borehole_diameter = 0.1524
-pipe_cross_section = pi * (pipe_diameter/2)**2
-borehole_cross_section = pi * (borehole_diameter/2)**2
-Water_height_initial = 65.532
-Volume_Initial = Water_height_initial * (borehole_cross_section - pipe_cross_section) * 1000
-Pressure_Initial = 101325
-TankVolume = 302.833
-Vlow = TankVolume - (Pressure_Initial * TankVolume) / 344738
-Vhigh = TankVolume - (Pressure_Initial * TankVolume) / 413685
-x = False
 
 print(Volume_Initial)
 
 print('Lower Bound of Volume (litres): ',Vlow,'\nUpper bound of Volume (litres): ',Vhigh)
 
-t = 0 #A counter for time that is independent from n
-Vl = [0] #Volume list with initial volume
-pump = []
-n = 0 #a counter for time
-V = 0 #Initial Volume 
-VfromWell = 0 #Total volume pumped from well.
-VfromWellInitial = 0 #Volume from well when the pump turns off everytime after it has run
-x = False
-x1 = True
 
 while n < T:
     if V < 0: break
@@ -163,7 +168,7 @@ n = np.linspace(1,n-1,n+1)
 
 H = [(item*0.001)/(borehole_cross_section - pipe_cross_section) for item in Vb_list] 
 
-h = [83.82-item for item in H]
+h = [Depth_of_pump-item for item in H]
 
 plt.plot(nList,Vb_list)
 plt.xlabel('Time (seconds)')
